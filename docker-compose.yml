@@ -1,0 +1,28 @@
+version: '2'
+
+volumes:
+  app-media: {}
+  db-data: {}
+
+services:
+  lwt-app:
+    image: brianhicks/lwt-docker:latest
+    links:
+      - lwt-db:mysql
+    volumes:
+      - app-media:/var/www/html/media
+      - ./config/connect.inc.php:/var/www/html/connect.inc.php:ro
+      - ./config/php.ini:/usr/local/etc/php.ini:ro
+    depends_on:
+      - lwt-db
+    ports:
+      - 7070:80
+  lwt-db:
+    image: mariadb:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=lwtdbrootpassword
+      - MYSQL_DATABASE=learning-with-texts
+      - MYSQL_USER=lwt
+      - MYSQL_PASSWORD=lwt
+    volumes:
+      - db-data:/var/lib/mysql
